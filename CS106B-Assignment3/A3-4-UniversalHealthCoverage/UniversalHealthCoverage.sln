@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalHealthCoverage", "UniversalHealthCoverage\UniversalHealthCoverage.vcproj", "{195BDA40-138E-4220-A582-A9CE74B06F95}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{195BDA40-138E-4220-A582-A9CE74B06F95}.Debug|Win32.ActiveCfg = Debug|Win32
+		{195BDA40-138E-4220-A582-A9CE74B06F95}.Debug|Win32.Build.0 = Debug|Win32
+		{195BDA40-138E-4220-A582-A9CE74B06F95}.Release|Win32.ActiveCfg = Release|Win32
+		{195BDA40-138E-4220-A582-A9CE74B06F95}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

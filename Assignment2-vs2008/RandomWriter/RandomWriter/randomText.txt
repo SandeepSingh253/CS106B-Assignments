@@ -1,0 +1,7 @@
+You can run the random writer program on any sort of input text, in any language! The web is a great
+place to find an endless variety of input material (blogs, slashdot, articles, etc.) When you’re ready for
+a large test case, Project Gutenberg maintains a library of thousands of full-length public-domain
+books. We’ve supplied you with files containing the text of Twain’s Tom Sawyer, William
+Shakespeare’s Hamlet, and George Eliot’s Middlemarch—all of which come from Project Gutenberg.
+At higher orders of analysis, the results the random writer produces from these sources can be
+surprisingly sensible and often amusing

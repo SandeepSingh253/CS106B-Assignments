@@ -1,0 +1,2 @@
+Finish the hashmap class.  I was too tired when I tried this the first
+time out.

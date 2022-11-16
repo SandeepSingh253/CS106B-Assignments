@@ -1,0 +1,37 @@
+refuse, also called municipal solid waste, nonhazardous 
+solid waste that requires collection and transport to a 
+processing or disposal site. Refuse includes garbage and
+ rubbish. Garbage is mostly decomposable food waste or
+ yard waste that is highly putrescible, while rubbish is
+ mostly dry material such as glass, paper, cloth, or wood that does not readily decompose. Some forms of rubbish are recyclable, and some municipalities compost yard waste and other garbage on a large scale. Trash is rubbish that includes bulky items such as old refrigerators, couches, or large tree stumps. Trash, especially electronic waste, may require special collection and handling. The sources of refuse include residential, commercial, institutional, and industrial activities. See also solid waste management.
+
+The environmental hazards caused by improper disposal of e-waste can be briefly described as follows: 
+1.	 Air Pollution: Burning of wires release hydrocarbons in the atmosphere. 
+2.	 Water Pollution: Electronic devices contain toxic metals like mercury, lead and lithium, which when disposed of improperly, mixes with ponds, lakes and groundwater. Communities that directly depend on these sources of water then consume it unknowingly. These heavy metals are hazardous for all forms of living beings. 
+3.	 Soil Pollution: These heavy metals enter the food chain as they are absorbed by plants from the soil. These metals not only destroy the plants, but also are then consumed by other living beings, leading to a poisonous food chain. 
+Now, let’s get into some tips and ways that you can reduce e-waste. 
+
+Although electronics constitute an indispensable part of everyday life, their hazardous effects on the environment cannot be overlooked or underestimated. The interface between electrical and electronic equipment and the environment takes place during the manufacturing, reprocessing, and disposal of these products. The emission of fumes, gases, and particulate matter into the air, the discharge of liquid waste into water and drainage systems, and the disposal of hazardous wastes contribute to environmental degradation. In addition to tighter regulation of e-waste recycling and disposal, there is a need for policies that extend the responsibility of all stakeholders, particularly the producers, beyond the point of sale and up to the end of product life.
+There are a number of specific ways in which e-waste recycling can be damaging to the environment. Burning to recover metal from wires and cables leads to emissions of brominated and chlorinated dioxins, causing air pollution. During the recycling process in the informal sector, toxic chemicals that have no economic value are simply dumped. The toxic industrial effluent is poured into underground aquifers and seriously affects the local groundwater quality, thereby making the water unfit for human consumption or for agricultural purposes. Atmospheric pollution is caused by dismantling activities as dust particles loaded with heavy metals and flame retardants enter the atmosphere. These particles either redeposit (wet or dry deposition) near the emission source or, depending on their size, can be transported over long distances. The dust can also enter the soil or water systems and, with compounds found in wet and dry depositions, can leach into the ground and cause both soil and water pollution. Soils become toxic when substances such as lead, mercury, cadmium, arsenic, and polychlorinated biphenyls (PCBs) are deposited in landfills.
+electronic equipment that have ceased to be of value to their users or
+ no longer satisfy their original purpose. Electronic waste (e-waste)       
+products have exhausted their utility value through either
+ redundancy, replacement, or breakage and include both “white goods” 
+such as refrigerators, washing machines, and microwaves and “brown 
+goods” such as televisions, radios, computers, and cell phones. Given that the
+ information and technology revolution has exponentially increased the use of new electronic equipment, it has also produced growing volumes of obsolete products; e-waste is one of the fastest-growing waste streams. Although e-waste contains complex combinations of highly toxic substances that pose a danger to health and the environment, many of the products also contain recoverable precious materials, making it a different kind of waste compared with traditional municipal waste.
+Globally, e-waste constitutes more than 5 percent of all municipal solid waste and is increasing with the rise of sales of electronic products in developing countries. The majority of the world’s e-waste is recycled in developing countries, where informal and hazardous setups for the extraction and sale of metals are common. Recycling companies in developed countries face strict environmental regulatory regimes and an increasing cost of waste disposal and thus may find exportation to small traders in developing countries more profitable than recycling in their own countries. There is also significant illegal transboundary movement of e-waste in the form of donations and charity from rich industrialized nations to developing countries. E-waste profiteers can harvest substantial profits owing to lax environmental laws, corrupt officials, and poorly paid workers, and there is an urgent need to develop policies and strategies to dispose of and recycle e-waste safely in order to achieve a sustainable future.
+
+E-waste or electronic waste is created when an electronic product is discarded after the end of its useful life. The rapid expansion of technology and the consumption driven society results in the creation of a very large amount of e-waste.
+
+Impacts on human health
+The complex composition and improper handling of e-waste adversely affect human health. A growing body of epidemiological and clinical evidence has led to increased concern about the potential threat of e-waste to human health, especially in developing countries such as India and China. The primitive methods used by unregulated backyard operators (e.g., the informal sector) to reclaim, reprocess, and recycle e-waste materials expose the workers to a number of toxic substances. Processes such as dismantling components, wet chemical processing, and incineration are used and result in direct exposure and inhalation of
+harmful chemicals. Safety equipment such as gloves, face masks, and
+ ventilation fans are virtually unknown, and workers often have little
+ idea of what they are handling.For instance, in terms of health hazards, 
+ open burning of printed wiring boards increases the concentration of 
+dioxins in the surrounding areas. These toxins cause an increased risk 
+of cancer if inhaled by workers and local residents. Toxic metals and
+ poison can also enter the bloodstream during the manual extraction and
+ collection of tiny quantities of precious metals, and workers are
+ continuously exposed to poisonous chemicals and fumes of highly concentrated acids. Recovering resalable copper by burning insulated wires causes neurological disorders, and acute exposure to cadmium, found in semiconductors and chip resistors, can damage the kidneys and liver and cause bone loss. Long-term exposure to lead on printed circuit boards and computer and television screens can damage the central and peripheral nervous system and kidneys, and children are more susceptible to these harmful effects.
