@@ -9,14 +9,23 @@
 #include "HuffmanEncoding.h"
 #include "HuffmanPQueue.h"
 #include "error.h"
+#include "queue.h"
 #include <string>
 #include <sstream>
 #include <iostream>
-
+#define COUNT 10
 
 bool encodeChar(ext_char ch,Node* encodingTree,string& bits);
 ext_char decodeChar(string bits,Node* encodingTree);
 ext_char decodeCharRec(string bits,Node* encodingTree,int index);
+
+int charToInt(char ch){
+	return int(ch)- 48;
+}
+
+char intToChar(int i){
+	return char(i+48);
+}
 
 /* Function: getFrequencyTable
  * Usage: Map<ext_char, int> freq = getFrequencyTable(file);
@@ -137,7 +146,7 @@ void encodeFile(istream& infile, Node* encodingTree, obstream& outfile) {
 		bool ans=encodeChar(ch,encodingTree,bits);
 		if(!ans) error("char not defined in encoding tree");
 		for(int i=0;i<bits.length();i++){
-			int bit=(int(bits[i]) - 48);
+			int bit=charToInt(bits[i]);
 			outfile.writeBit(bit);
 		}
 	}
@@ -208,9 +217,7 @@ void decodeFile(ibstream& infile, Node* encodingTree, ostream& file) {
 	while(true){
 		int bit= infile.readBit();
 		if(infile.fail()) break;
-		ostringstream str1;
-		str1<<bit;
-		bits+=str1.str();
+		bits+=intToChar(bit);
 		ext_char ch=decodeChar(bits,encodingTree);
 		if(ch==PSEUDO_EOF){
 			return;
@@ -221,6 +228,83 @@ void decodeFile(ibstream& infile, Node* encodingTree, ostream& file) {
 		}
 	}
 }
+
+Node* succinctDecodeTree(Queue<int>& struc, Queue<ext_char>& data){
+	if(struc.size() <= 0)
+		return NULL;
+	int b = struc.dequeue();
+    if(b == 1){
+		ext_char key = data.dequeue();
+        Node *root = new Node;
+	    root->character=key;
+        root->zero = succinctDecodeTree(struc, data);
+        root->one = succinctDecodeTree(struc, data);
+        return root;
+   }
+   return NULL;
+}
+
+void succinctEncodeTree(Node* root,Queue<int> &strucBits,Queue<ext_char> &data){
+	if(root==NULL){
+		strucBits.enqueue(0);
+	}else{
+		strucBits.enqueue(1);
+		data.enqueue(root->character);
+		succinctEncodeTree(root->zero,strucBits,data);
+		succinctEncodeTree(root->one,strucBits,data);
+	}
+}
+
+void writeHeaderSu(obstream& outfile,Node* tree){
+	Queue<int> strucBits;
+	Queue<ext_char> data;
+	succinctEncodeTree(tree,strucBits,data);
+
+	int strucBitsSize=strucBits.size();
+	int dataSize=data.size();
+
+	outfile <<strucBitsSize<<' '<<dataSize<<' ';
+	
+	for(int i=0;i<strucBitsSize;i++){
+		outfile.writeBit(strucBits.dequeue());
+	}
+
+	for(int i=0;i<dataSize;i++){
+		outfile << data.dequeue() << ' ';
+	}
+}
+
+Node* readHeaderSu(ibstream& infile){
+	Queue<int> strucBits;
+	Queue<ext_char> data;
+	
+	int strucBitSize;
+	infile>>strucBitSize;
+
+	//skip the space.
+	infile.get();
+
+	int dataSize;
+	infile>>dataSize;
+	//skip the space.
+	infile.get();
+	
+	for(int i=0;i<strucBitSize;i++){
+		strucBits.enqueue(infile.readBit());
+	}
+		
+	for(int i=0;i<dataSize;i++){
+		int ch;
+		infile>>ch;
+		data.enqueue(ch);
+		//skip the space.
+		infile.get();
+	}
+
+	return succinctDecodeTree(strucBits,data);
+	
+}
+
 
 /* Function: writeFileHeader
  * Usage: writeFileHeader(output, frequencies);
@@ -332,7 +416,9 @@ void compress(ibstream& infile, obstream& outfile) {
 	Map<ext_char,int> frequencies=getFrequencyTable(infile);
 	Node* encodingTree=buildEncodingTree(frequencies);
 	infile.rewind();
-	writeFileHeader(outfile,frequencies);
+
+	writeHeaderSu(outfile,encodingTree);
+	//writeFileHeader(outfile,frequencies);
 	encodeFile(infile,encodingTree,outfile);
 	freeTree(encodingTree);
 
@@ -351,8 +437,10 @@ void compress(ibstream& infile, obstream& outfile) {
  * primarily be glue code.
  */
 void decompress(ibstream& infile, ostream & outfile) {
-	Map<ext_char,int> frequencies=readFileHeader(infile);
-	Node* encodingTree=buildEncodingTree(frequencies);
+	//Map<ext_char,int> frequencies=readFileHeader(infile);
+	//Node* encodingTree=buildEncodingTree(frequencies);
+
+	Node* encodingTree=readHeaderSu(infile);
 	decodeFile(infile,encodingTree,outfile);
 	freeTree(encodingTree);
 }
