@@ -12,20 +12,23 @@
 #include "queue.h"
 #include <string>
 #include <sstream>
-#include <iostream>
-#define COUNT 10
+
+//Helper functions
 
 bool encodeChar(ext_char ch,Node* encodingTree,string& bits);
+
 ext_char decodeChar(string bits,Node* encodingTree);
+
 ext_char decodeCharRec(string bits,Node* encodingTree,int index);
 
-int charToInt(char ch){
-	return int(ch)- 48;
-}
+Node* succinctDecodeTree(Queue<int>& struc, Queue<ext_char>& data);
 
-char intToChar(int i){
-	return char(i+48);
-}
+void succinctEncodeTree(Node* root,Queue<int> &strucBits,Queue<ext_char> &data);
+
+int charToInt(char ch);
+
+char intToChar(int i);
+
 
 /* Function: getFrequencyTable
  * Usage: Map<ext_char, int> freq = getFrequencyTable(file);
@@ -153,53 +156,6 @@ void encodeFile(istream& infile, Node* encodingTree, obstream& outfile) {
 	
 }
 
-bool encodeChar(ext_char ch,Node* encodingTree,string& bits){
-	if(encodingTree==NULL){
-		return false;
-	}else if(ch==encodingTree->character){
-		return true;
-	}else{
-		for(int i=0;i<2;i++){
-			if(i==0){	
-				bits+="0";
-				if(encodeChar(ch,encodingTree->zero,bits)){
-					return true;
-				}
-				bits=bits.substr(0,bits.length()-1);
-			}else{
-				bits+="1";
-				if(encodeChar(ch,encodingTree->one,bits)){
-					return true;
-				}
-				bits=bits.substr(0,bits.length()-1);
-			}
-		}
-		return false;
-	}
-}
-
-ext_char decodeChar(string bits,Node* encodingTree){
-	ext_char ans=decodeCharRec(bits,encodingTree,0);
-	return ans;
-}
-
-ext_char decodeCharRec(string bits,Node* encodingTree,int index){
-	if(encodingTree==NULL || bits.length()==0){
-		return -1;
-	}else if(bits.length()==index){
-		return encodingTree->character;
-	}else{
-		char ch=bits[index];
-		int bitValue=int(ch) - 48;
-		if(bitValue==0){
-			return decodeCharRec(bits,encodingTree->zero,++index);
-		}else{
-			return decodeCharRec(bits,encodingTree->one,++index);
-		}
-	}
-}
-
-
 /* Function: decodeFile
  * Usage: decodeFile(encodedFile, encodingTree, resultFile);
  * --------------------------------------------------------
@@ -229,33 +185,15 @@ void decodeFile(ibstream& infile, Node* encodingTree, ostream& file) {
 	}
 }
 
-Node* succinctDecodeTree(Queue<int>& struc, Queue<ext_char>& data){
-	if(struc.size() <= 0)
-		return NULL;
-	int b = struc.dequeue();
-    if(b == 1){
-		ext_char key = data.dequeue();
-        Node *root = new Node;
-	    root->character=key;
-        root->zero = succinctDecodeTree(struc, data);
-        root->one = succinctDecodeTree(struc, data);
-        return root;
-   }
-   return NULL;
-}
-
-void succinctEncodeTree(Node* root,Queue<int> &strucBits,Queue<ext_char> &data){
-	if(root==NULL){
-		strucBits.enqueue(0);
-	}else{
-		strucBits.enqueue(1);
-		data.enqueue(root->character);
-		succinctEncodeTree(root->zero,strucBits,data);
-		succinctEncodeTree(root->one,strucBits,data);
-	}
-}
-
-void writeHeaderSu(obstream& outfile,Node* tree){
+/* Function: writeFileHeader
+ * Usage: writeFileHeader(outfile, tree);
+ * --------------------------------------------------------
+ * Writes strucBits,bits representing structure of the
+ * encoding tree, and data ,character present at each leaf node,
+ * in the file. This information can thenbe used to 
+ * decompress input files once they've been compressed.
+ */
+void writeFileHeader(obstream& outfile,Node* tree){
 	Queue<int> strucBits;
 	Queue<ext_char> data;
 	succinctEncodeTree(tree,strucBits,data);
@@ -274,7 +212,47 @@ void writeHeaderSu(obstream& outfile,Node* tree){
 	}
 }
 
-Node* readHeaderSu(ibstream& infile){
+//Using succinct structure instead
+
+//void writeFileHeader(obstream& outfile, Map<ext_char, int>& frequencies) {
+//	/* The format we will use is the following:
+//	 *
+//	 * First number: Total number of characters whose frequency is being
+//	 *               encoded.
+//	 * An appropriate number of pairs of the form [char][frequency][space],
+//	 * encoding the number of occurrences.
+//	 *
+//	 * No information about PSEUDO_EOF is written, since the frequency is
+//	 * always 1.
+//	 */
+//	 
+//	/* Verify that we have PSEUDO_EOF somewhere in this mapping. */
+//	if (!frequencies.containsKey(PSEUDO_EOF)) {
+//		error("No PSEUDO_EOF defined.");
+//	}
+//	
+//	/* Write how many encodings we're going to have.  Note the space after
+//	 * this number to ensure that we can read it back correctly.
+//	 */
+//	outfile << frequencies.size() - 1 << ' ';
+//	
+//	/* Now, write the letter/frequency pairs. */
+//	foreach (ext_char ch in frequencies) {
+//		/* Skip PSEUDO_EOF if we see it. */
+//		if (ch == PSEUDO_EOF) continue;
+//		
+//		/* Write out the letter and its frequency. */
+//		outfile << char(ch) << frequencies[ch] << ' ';
+//	}
+//}
+
+/* Function: readFileHeader
+ * Usage: Node* encodingTree=reereadFileHeader(ibstream& infile);
+ * --------------------------------------------------------
+ * Reads the structure bits and data, and then calls 
+ * helper function succinctEncodeTree to reconstruct the encoding Tree.
+ */
+Node* readFileHeader(ibstream& infile){
 	Queue<int> strucBits;
 	Queue<ext_char> data;
 	
@@ -302,104 +280,45 @@ Node* readHeaderSu(ibstream& infile){
 	}
 
 	return succinctDecodeTree(strucBits,data);
-	
 }
 
+//using succinct structure instead
 
-/* Function: writeFileHeader
- * Usage: writeFileHeader(output, frequencies);
- * --------------------------------------------------------
- * Writes a table to the front of the specified output file
- * that contains information about the frequencies of all of
- * the letters in the input text.  This information can then
- * be used to decompress input files once they've been
- * compressed.
- *
- * This function is provided for you.  You are free to modify
- * it if you see fit, but if you do you must also update the
- * readFileHeader function defined below this one so that it
- * can properly read the data back.
- */
-void writeFileHeader(obstream& outfile, Map<ext_char, int>& frequencies) {
-	/* The format we will use is the following:
-	 *
-	 * First number: Total number of characters whose frequency is being
-	 *               encoded.
-	 * An appropriate number of pairs of the form [char][frequency][space],
-	 * encoding the number of occurrences.
-	 *
-	 * No information about PSEUDO_EOF is written, since the frequency is
-	 * always 1.
-	 */
-	 
-	/* Verify that we have PSEUDO_EOF somewhere in this mapping. */
-	if (!frequencies.containsKey(PSEUDO_EOF)) {
-		error("No PSEUDO_EOF defined.");
-	}
-	
-	/* Write how many encodings we're going to have.  Note the space after
-	 * this number to ensure that we can read it back correctly.
-	 */
-	outfile << frequencies.size() - 1 << ' ';
-	
-	/* Now, write the letter/frequency pairs. */
-	foreach (ext_char ch in frequencies) {
-		/* Skip PSEUDO_EOF if we see it. */
-		if (ch == PSEUDO_EOF) continue;
-		
-		/* Write out the letter and its frequency. */
-		outfile << char(ch) << frequencies[ch] << ' ';
-	}
-}
-
-/* Function: readFileHeader
- * Usage: Map<ext_char, int> freq = writeFileHeader(input);
- * --------------------------------------------------------
- * Reads a table to the front of the specified input file
- * that contains information about the frequencies of all of
- * the letters in the input text.  This information can then
- * be used to reconstruct the encoding tree for that file.
- *
- * This function is provided for you.  You are free to modify
- * it if you see fit, but if you do you must also update the
- * writeFileHeader function defined before this one so that it
- * can properly write the data.
- */
-Map<ext_char, int> readFileHeader(ibstream& infile) {
-	/* This function inverts the mapping we wrote out in the
-	 * writeFileHeader function before.  If you make any
-	 * changes to that function, be sure to change this one
-	 * too!
-	 */
-	Map<ext_char, int> result;
-	
-	/* Read how many values we're going to read in. */
-	int numValues;
-	infile >> numValues;
-	
-	/* Skip trailing whitespace. */
-	infile.get();
-	
-	/* Read those values in. */
-	for (int i = 0; i < numValues; i++) {
-		/* Get the character we're going to read. */
-		ext_char ch = infile.get();
-		
-		/* Get the frequency. */
-		int frequency;
-		infile >> frequency;
-		
-		/* Skip the space character. */
-		infile.get();
-		
-		/* Add this to the encoding table. */
-		result[ch] = frequency;
-	}
-	
-	/* Add in 1 for PSEUDO_EOF. */
-	result[PSEUDO_EOF] = 1;
-	return result;
-}
+//Map<ext_char, int> readFileHeader(ibstream& infile) {
+//	/* This function inverts the mapping we wrote out in the
+//	 * writeFileHeader function before.  If you make any
+//	 * changes to that function, be sure to change this one
+//	 * too!
+//	 */
+//	Map<ext_char, int> result;
+//	
+//	/* Read how many values we're going to read in. */
+//	int numValues;
+//	infile >> numValues;
+//	
+//	/* Skip trailing whitespace. */
+//	infile.get();
+//	
+//	/* Read those values in. */
+//	for (int i = 0; i < numValues; i++) {
+//		/* Get the character we're going to read. */
+//		ext_char ch = infile.get();
+//		
+//		/* Get the frequency. */
+//		int frequency;
+//		infile >> frequency;
+//		
+//		/* Skip the space character. */
+//		infile.get();
+//		
+//		/* Add this to the encoding table. */
+//		result[ch] = frequency;
+//	}
+//	
+//	/* Add in 1 for PSEUDO_EOF. */
+//	result[PSEUDO_EOF] = 1;
+//	return result;
+//}
 
 /* Function: compress
  * Usage: compress(infile, outfile);
@@ -416,12 +335,9 @@ void compress(ibstream& infile, obstream& outfile) {
 	Map<ext_char,int> frequencies=getFrequencyTable(infile);
 	Node* encodingTree=buildEncodingTree(frequencies);
 	infile.rewind();
-
-	writeHeaderSu(outfile,encodingTree);
-	//writeFileHeader(outfile,frequencies);
+	writeFileHeader(outfile,encodingTree);
 	encodeFile(infile,encodingTree,outfile);
 	freeTree(encodingTree);
-
 }
 
 /* Function: decompress
@@ -437,10 +353,138 @@ void compress(ibstream& infile, obstream& outfile) {
  * primarily be glue code.
  */
 void decompress(ibstream& infile, ostream & outfile) {
-	//Map<ext_char,int> frequencies=readFileHeader(infile);
-	//Node* encodingTree=buildEncodingTree(frequencies);
-
-	Node* encodingTree=readHeaderSu(infile);
+	Node* encodingTree=readFileHeader(infile);
 	decodeFile(infile,encodingTree,outfile);
 	freeTree(encodingTree);
+}
+
+
+
+//Helper Funtions
+
+
+/* Function: encodeChar(ext_char ch,Node* encodingTree,string& bits)
+ * Usage: encodeChar(char,encodingTree,bits);
+ * --------------------------------------------------------
+ * BackTracking fucntion to encode a character into 
+ * bits(string passed by reference), using encoding tree.
+ * Returns false if character is not defined in encoding tree.
+ */
+bool encodeChar(ext_char ch,Node* encodingTree,string& bits){
+	if(encodingTree==NULL){
+		return false;
+	}else if(ch==encodingTree->character){
+		return true;
+	}else{
+		for(int i=0;i<2;i++){
+			if(i==0){	
+				bits+="0";
+				if(encodeChar(ch,encodingTree->zero,bits)){
+					return true;
+				}
+				bits=bits.substr(0,bits.length()-1);
+			}else{
+				bits+="1";
+				if(encodeChar(ch,encodingTree->one,bits)){
+					return true;
+				}
+				bits=bits.substr(0,bits.length()-1);
+			}
+		}
+		return false;
+	}
+}
+
+/* Function: decodeChar(string bits,Node* encodingTree
+ * Usage: ext_char ch = decodeChar(bits,encodingTree);
+ * --------------------------------------------------------
+ * Wrapper function to decodeCharRec, translates bits to character
+ * using encoding tree, return NOT_A_CHAR if no such character is
+ * defined in encoding tree.
+ */
+
+ext_char decodeChar(string bits,Node* encodingTree){
+	ext_char ans=decodeCharRec(bits,encodingTree,0);
+	return ans;
+}
+
+ext_char decodeCharRec(string bits,Node* encodingTree,int index){
+	if(encodingTree==NULL || bits.length()==0){
+		return NOT_A_CHAR;
+	}else if(bits.length()==index){
+		return encodingTree->character;
+	}else{
+		char ch=bits[index];
+		int bitValue=int(ch) - 48;
+		if(bitValue==0){
+			return decodeCharRec(bits,encodingTree->zero,++index);
+		}else{
+			return decodeCharRec(bits,encodingTree->one,++index);
+		}
+	}
+}
+
+
+/* Function: succinctEncodeTree(Node* root,Queue<int> &strucBits,Queue<ext_char> &data)
+ * Usage: succinctEncodeTree(root,struc,data);
+ * --------------------------------------------------------
+ * Encode tree into a struc bits and data queue (passed by refecence)
+ * to write the encoding tree into the file later.
+ */
+void succinctEncodeTree(Node* root,Queue<int> &strucBits,Queue<ext_char> &data){
+	if(root->zero == NULL && root->one == NULL){
+		data.enqueue(root->character);
+		strucBits.enqueue(0);
+	}else{
+		strucBits.enqueue(1);
+		succinctEncodeTree(root->zero,strucBits,data);
+		succinctEncodeTree(root->one,strucBits,data);
+	}
+}
+
+/* Function: succinctDecodeTree(Queue<int>& struc, Queue<ext_char>& data)
+ * Usage: Node* encodingTree = succinctDecodeTree(struc,data);
+ * --------------------------------------------------------
+ * Using structure bits and data constructs encoding tree
+ * used to decompress file.
+ */
+Node* succinctDecodeTree(Queue<int>& struc, Queue<ext_char>& data){
+	if(struc.isEmpty()) return NULL;
+	int b = struc.dequeue();
+	if(b== 0){
+		ext_char key = data.dequeue();
+		Node *root = new Node;
+		root->character=key;
+		root->zero = NULL;
+        root->one = NULL;
+		return root;
+	}
+    if(b == 1){
+        Node *root = new Node;
+		root->character=NOT_A_CHAR;
+        root->zero = succinctDecodeTree(struc, data);
+        root->one = succinctDecodeTree(struc, data);
+        return root;
+   }
+   return NULL;
+}
+
+/* Function: charToInt
+ * Usage: int num = intToChar('10');
+ * --------------------------------------------------------
+ * converts character to integer
+ *i.e. return 10 for '10'
+ */
+int charToInt(char ch){
+	return int(ch)- 48;
+}
+
+/* Function: intToChar
+ * Usage: char ch = intToChar(10);
+ * --------------------------------------------------------
+ * converts integer to character
+ *i.e. return '10' for 10
+ */
+char intToChar(int i){
+	return char(i+48);
 }

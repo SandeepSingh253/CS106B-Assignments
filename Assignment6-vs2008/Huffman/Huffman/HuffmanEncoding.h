@@ -85,35 +85,22 @@ void encodeFile(istream& infile, Node* encodingTree, obstream& outfile);
 void decodeFile(ibstream& infile, Node* encodingTree, ostream& file);
 
 /* Function: writeFileHeader
- * Usage: writeFileHeader(output, frequencies);
+ * Usage: writeFileHeader(outfile, tree);
  * --------------------------------------------------------
- * Writes a table to the front of the specified output file
- * that contains information about the frequencies of all of
- * the letters in the input text.  This information can then
- * be used to decompress input files once they've been
- * compressed.
- *
- * This function is provided for you.  You are free to modify
- * it if you see fit, but if you do you must also update the
- * readFileHeader function defined below this one so that it
- * can properly read the data back.
+ * Writes strucBits,bits representing structure of the
+ * encoding tree, and data ,character present at each leaf node,
+ * in the file. This information can thenbe used to 
+ * decompress input files once they've been compressed.
  */
-void writeFileHeader(obstream& outfile, Map<ext_char, int>& frequencies);
+void writeFileHeader(obstream& outfile,Node* tree);
 
 /* Function: readFileHeader
- * Usage: Map<ext_char, int> freq = writeFileHeader(input);
+ * Usage: Node* encodingTree=reereadFileHeader(ibstream& infile);
  * --------------------------------------------------------
- * Reads a table to the front of the specified input file
- * that contains information about the frequencies of all of
- * the letters in the input text.  This information can then
- * be used to reconstruct the encoding tree for that file.
- *
- * This function is provided for you.  You are free to modify
- * it if you see fit, but if you do you must also update the
- * writeFileHeader function defined before this one so that it
- * can properly write the data.
+ * Reads the structure bits and data, and then calls 
+ * helper function succinctEncodeTree to reconstruct the encoding Tree.
  */
-Map<ext_char, int> readFileHeader(ibstream& infile);
+Node* readFileHeader(ibstream& infile);
 
 /* Function: compress
  * Usage: compress(infile, outfile);
